@@ -8,7 +8,7 @@
 # Environment:
 #   KUBECONFIG             — path to cluster kubeconfig (required)
 #   E2E_NAMESPACE          — OSAC namespace (default: osac-e2e-ci)
-#   OSAC_AGENT_NAMESPACE   — namespace where Assisted Installer Agent CRs live (default: hardware-inventory)
+#   OSAC_AGENT_NAMESPACE   — namespace where Assisted Installer Agent CRs live (default: E2E_NAMESPACE)
 #   JUNIT_PATH             — path to JUnit XML to include (optional)
 #   OSAC_E2E_OUTPUT_DIR    — where the E2E suites write their output
 #                            (default: dirname of JUNIT_PATH, else /tmp/test-output);
@@ -224,7 +224,7 @@ oc get clusterorders -n "${E2E_NAMESPACE}" -o json 2>"$MGMT_CLUSTER_DIR/clustero
     > "$MGMT_CLUSTER_DIR/clusterorders.json" || true
 
 echo "Collecting agent status..."
-AGENT_NAMESPACE="${OSAC_AGENT_NAMESPACE:-hardware-inventory}"
+AGENT_NAMESPACE="${OSAC_AGENT_NAMESPACE:-${E2E_NAMESPACE}}"
 if oc get namespace "${AGENT_NAMESPACE}" &>/dev/null; then
     oc get agents.agent-install.openshift.io -n "${AGENT_NAMESPACE}" -o wide > "$MGMT_CLUSTER_DIR/agents.txt" 2>&1 || true
     oc get agents.agent-install.openshift.io -n "${AGENT_NAMESPACE}" -o yaml > "$MGMT_CLUSTER_DIR/agents.yaml" 2>&1 || true
